@@ -1,0 +1,8 @@
+export DEBIAN_FRONTEND=
+export SHELL=/bin/bash
+export LS_OPTIONS='--color=auto'
+eval "`dircolors`"
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -la'
+alias l='ls $LS_OPTIONS -lA'
+
