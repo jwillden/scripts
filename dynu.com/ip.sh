@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# This script synchronizes a dynamic dns value for https://freedns.afraid.org/
-# It requires a configured hostname and a Direct URL value stored in the same
-# directory named .url e.g. https://freedns.afraid.org/dynamic/update.php?[your token goes here]
+# This script synchronizes a dynamic dns value for https://dynu.com
+# It requires a configured hostname and a username:password combination stored in the same 
+# directory named .hostname and .credentials 
+
+# .credentials must contain a single line with following format:
+# username:password
+
+# .hostname must contain a single line with the configured hostname:
+# e.g. mycoolhostname.dynu.net
 
 # Get the directory of the script and use it as the absolute path for everything
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
