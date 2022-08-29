@@ -1,0 +1,49 @@
+HOSTED_ZONE_ID=Z0014384Q2G34N6T242M
+IP=$(curl -s --ipv4 ifconfig.io/ip)
+
+echo $IP
+PREVIOUS_IP=NULL
+
+[ -r ip ] && PREVIOUS_IP=$(< ip )
+echo $PREVIOUS_IP
+
+if [ $IP != $PREVIOUS_IP ]; then
+	echo "Previous IP $PREVIOUS_IP is different than the current IP $IP"
+	ROUTE_53_IP=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --profile sprokrok | jq -r '.ResourceRecordSets[] | select (.Type == "'"A"'") | .ResourceRecords[0].Value')
+	echo $ROUTE_53_IP
+
+	if [ $ROUTE_53_IP != $IP ]; then
+		echo "Route_53_IP $ROUTE_53_IP is different than current IP $IP"
+
+		cat > /tmp/route53_changes.json << EOF
+		{
+  "Comment":"Updated From DDNS Shell Script",
+  "Changes":[
+  {
+    "Action":"UPSERT",
+      "ResourceRecordSet":{
+        "ResourceRecords":[
+           {
+                "Value":"$IP"
+            }
+            ],
+            "Name":"anthemapps.com",
+            "Type":"A",
+            "TTL":60
+          }
+        }
+      ]
+    }
+EOF
+
+		aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --profile sprokrok --change-batch file:///tmp/route53_changes.json
+
+	else
+		echo "IP Address on Route53 is same as actual IP address. No need to update"
+	fi
+
+else
+	echo "IP Address on disk is the same as the actual ip address. No need to update"
+fi
+
+echo $IP > ip
