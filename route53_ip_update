@@ -1,3 +1,9 @@
+# crontab -e:
+# * * * * * ~/ip_update.sh >> ~/ip_log.log 2>&1
+
+# Install aws cli as root and create a /root/.aws/credentials file with the appropriate details
+#	Currently in the aws-west-1 region
+
 HOSTED_ZONE_ID=Z0014384Q2G34N6T242M
 IP=$(curl -s --ipv4 ifconfig.io/ip)
 
